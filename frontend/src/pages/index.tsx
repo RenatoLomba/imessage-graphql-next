@@ -1,15 +1,29 @@
-import { signIn, useSession } from 'next-auth/react'
+import type { GetServerSideProps } from 'next'
+import { getSession, useSession } from 'next-auth/react'
+
+import { Auth } from '../components/auth'
+import { Chat } from '../components/chat'
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const session = await getSession(ctx)
+
+  return {
+    props: {
+      session,
+    },
+  }
+}
 
 export default function Home() {
-  const { data } = useSession()
+  const { data: session } = useSession()
 
-  return (
-    <div>
-      {!data ? (
-        <button onClick={() => signIn('google')}>Sign In</button>
-      ) : (
-        <div>Signed as: {data.user?.name}</div>
-      )}
-    </div>
-  )
+  if (!session?.user?.username) {
+    const reloadSession = () => {
+      console.log('reloading session')
+    }
+
+    return <Auth session={session} reloadSession={reloadSession} />
+  }
+
+  return <Chat />
 }
