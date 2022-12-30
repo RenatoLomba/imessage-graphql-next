@@ -1,0 +1,6 @@
+mutation CreateUsername($username: String) {
+  createUsername(username: $username) {
+    error
+    success
+  }
+}

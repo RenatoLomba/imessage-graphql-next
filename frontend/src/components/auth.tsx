@@ -5,8 +5,12 @@ import { FcGoogle } from 'react-icons/fc'
 
 import { Button, Center, Stack, Text, Icon, Input } from '@chakra-ui/react'
 
+import { useCreateUsernameMutation } from '../graphql/generated'
+
 function UsernameForm() {
   const [username, setUsername] = useState('')
+
+  const [createUsername] = useCreateUsernameMutation()
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -15,9 +19,13 @@ function UsernameForm() {
     if (!validUsername) return
 
     try {
-      /**
-       * createUsername mutation
-       */
+      const result = await createUsername({
+        variables: {
+          username,
+        },
+      })
+
+      console.log('createUsername result', result)
     } catch (error) {
       console.log('onSubmit error', error)
     }
