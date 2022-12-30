@@ -18,52 +18,52 @@ export type Scalars = {
 export type CreateUsernameResponse = {
   __typename?: 'CreateUsernameResponse';
   error?: Maybe<Scalars['String']>;
-  success?: Maybe<Scalars['Boolean']>;
+  success: Scalars['Boolean'];
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createUsername?: Maybe<CreateUsernameResponse>;
+  createUsername: CreateUsernameResponse;
 };
 
 
 export type MutationCreateUsernameArgs = {
-  username?: InputMaybe<Scalars['String']>;
+  username: Scalars['String'];
 };
 
 export type Query = {
   __typename?: 'Query';
-  searchUsers?: Maybe<Array<Maybe<User>>>;
+  users: Array<User>;
 };
 
 
-export type QuerySearchUsersArgs = {
+export type QueryUsersArgs = {
   username?: InputMaybe<Scalars['String']>;
 };
 
 export type User = {
   __typename?: 'User';
-  id?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
   username?: Maybe<Scalars['String']>;
 };
 
 export type CreateUsernameMutationVariables = Exact<{
+  username: Scalars['String'];
+}>;
+
+
+export type CreateUsernameMutation = { __typename?: 'Mutation', createUsername: { __typename?: 'CreateUsernameResponse', error?: string | null, success: boolean } };
+
+export type UsersQueryVariables = Exact<{
   username?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type CreateUsernameMutation = { __typename?: 'Mutation', createUsername?: { __typename?: 'CreateUsernameResponse', error?: string | null, success?: boolean | null } | null };
-
-export type SearchUsersQueryVariables = Exact<{
-  username?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type SearchUsersQuery = { __typename?: 'Query', searchUsers?: Array<{ __typename?: 'User', id?: string | null, username?: string | null } | null> | null };
+export type UsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, username?: string | null }> };
 
 
 export const CreateUsernameDocument = gql`
-    mutation CreateUsername($username: String) {
+    mutation CreateUsername($username: String!) {
   createUsername(username: $username) {
     error
     success
@@ -96,9 +96,9 @@ export function useCreateUsernameMutation(baseOptions?: Apollo.MutationHookOptio
 export type CreateUsernameMutationHookResult = ReturnType<typeof useCreateUsernameMutation>;
 export type CreateUsernameMutationResult = Apollo.MutationResult<CreateUsernameMutation>;
 export type CreateUsernameMutationOptions = Apollo.BaseMutationOptions<CreateUsernameMutation, CreateUsernameMutationVariables>;
-export const SearchUsersDocument = gql`
-    query SearchUsers($username: String) {
-  searchUsers(username: $username) {
+export const UsersDocument = gql`
+    query Users($username: String) {
+  users(username: $username) {
     id
     username
   }
@@ -106,29 +106,29 @@ export const SearchUsersDocument = gql`
     `;
 
 /**
- * __useSearchUsersQuery__
+ * __useUsersQuery__
  *
- * To run a query within a React component, call `useSearchUsersQuery` and pass it any options that fit your needs.
- * When your component renders, `useSearchUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSearchUsersQuery({
+ * const { data, loading, error } = useUsersQuery({
  *   variables: {
  *      username: // value for 'username'
  *   },
  * });
  */
-export function useSearchUsersQuery(baseOptions?: Apollo.QueryHookOptions<SearchUsersQuery, SearchUsersQueryVariables>) {
+export function useUsersQuery(baseOptions?: Apollo.QueryHookOptions<UsersQuery, UsersQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SearchUsersQuery, SearchUsersQueryVariables>(SearchUsersDocument, options);
+        return Apollo.useQuery<UsersQuery, UsersQueryVariables>(UsersDocument, options);
       }
-export function useSearchUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchUsersQuery, SearchUsersQueryVariables>) {
+export function useUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UsersQuery, UsersQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SearchUsersQuery, SearchUsersQueryVariables>(SearchUsersDocument, options);
+          return Apollo.useLazyQuery<UsersQuery, UsersQueryVariables>(UsersDocument, options);
         }
-export type SearchUsersQueryHookResult = ReturnType<typeof useSearchUsersQuery>;
-export type SearchUsersLazyQueryHookResult = ReturnType<typeof useSearchUsersLazyQuery>;
-export type SearchUsersQueryResult = Apollo.QueryResult<SearchUsersQuery, SearchUsersQueryVariables>;
+export type UsersQueryHookResult = ReturnType<typeof useUsersQuery>;
+export type UsersLazyQueryHookResult = ReturnType<typeof useUsersLazyQuery>;
+export type UsersQueryResult = Apollo.QueryResult<UsersQuery, UsersQueryVariables>;

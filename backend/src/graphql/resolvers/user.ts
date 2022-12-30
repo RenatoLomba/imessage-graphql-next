@@ -1,6 +1,6 @@
 export const userResolvers = {
   Query: {
-    searchUsers: () => {},
+    users: () => {},
   },
   Mutation: {
     createUsername: () => {},

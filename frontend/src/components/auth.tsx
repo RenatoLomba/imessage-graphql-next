@@ -1,23 +1,42 @@
 import type { Session } from 'next-auth'
 import { signIn } from 'next-auth/react'
-import { FormEvent, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { FcGoogle } from 'react-icons/fc'
 
-import { Button, Center, Stack, Text, Icon, Input } from '@chakra-ui/react'
+import {
+  Button,
+  Center,
+  Stack,
+  Text,
+  Icon,
+  Input,
+  useToast,
+  FormControl,
+  FormErrorMessage,
+} from '@chakra-ui/react'
 
 import { useCreateUsernameMutation } from '../graphql/generated'
 
+type UsernameFormFields = {
+  username: string
+}
+
 function UsernameForm() {
-  const [username, setUsername] = useState('')
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<UsernameFormFields>()
 
-  const [createUsername] = useCreateUsernameMutation()
+  const errorToast = useToast({
+    status: 'error',
+    variant: 'left-accent',
+    isClosable: true,
+  })
 
-  const onSubmit = async (e: FormEvent) => {
-    e.preventDefault()
+  const [createUsername, { loading }] = useCreateUsernameMutation()
 
-    const validUsername = username.trim()
-    if (!validUsername) return
-
+  const onFormSubmit = async ({ username }: UsernameFormFields) => {
     try {
       const result = await createUsername({
         variables: {
@@ -27,19 +46,36 @@ function UsernameForm() {
 
       console.log('createUsername result', result)
     } catch (error) {
-      console.log('onSubmit error', error)
+      errorToast({ title: 'Create user error.' })
     }
   }
 
   return (
-    <Stack align="center" spacing={6} as="form" onSubmit={onSubmit}>
+    <Stack
+      align="center"
+      spacing={6}
+      as="form"
+      onSubmit={handleSubmit(onFormSubmit)}
+    >
       <Text fontSize="3xl">Create a Username</Text>
-      <Input
-        placeholder="Enter a username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <Button w="100%" type="submit">
+      <FormControl isDisabled={loading} isInvalid={!!errors?.username}>
+        <Input
+          type="text"
+          placeholder="Enter a username"
+          {...register('username', {
+            required: {
+              message: 'Username is required',
+              value: true,
+            },
+            minLength: 1,
+            maxLength: 50,
+          })}
+        />
+        {errors?.username && (
+          <FormErrorMessage>{errors.username.message}</FormErrorMessage>
+        )}
+      </FormControl>
+      <Button isLoading={loading} w="100%" type="submit">
         Save
       </Button>
     </Stack>

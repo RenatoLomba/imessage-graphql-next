@@ -1,4 +1,4 @@
-mutation CreateUsername($username: String) {
+mutation CreateUsername($username: String!) {
   createUsername(username: $username) {
     error
     success
