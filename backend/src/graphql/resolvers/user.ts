@@ -2,11 +2,14 @@ import type {
   ICreateUsernameArgs,
   ICreateUsernameResult,
   IGraphQLContext,
+  IUsersArgs,
 } from '../../utils/types'
 
 export const userResolvers = {
   Query: {
-    users: () => {},
+    users: (_: unknown, args: IUsersArgs) => {
+      console.log('users', { args })
+    },
   },
   Mutation: {
     createUsername: async (

@@ -44,6 +44,7 @@ export type QueryUsersArgs = {
 export type User = {
   __typename?: 'User';
   id: Scalars['String'];
+  image?: Maybe<Scalars['String']>;
   username?: Maybe<Scalars['String']>;
 };
 
@@ -59,7 +60,7 @@ export type UsersQueryVariables = Exact<{
 }>;
 
 
-export type UsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, username?: string | null }> };
+export type UsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, image?: string | null, username?: string | null }> };
 
 
 export const CreateUsernameDocument = gql`
@@ -100,6 +101,7 @@ export const UsersDocument = gql`
     query Users($username: String) {
   users(username: $username) {
     id
+    image
     username
   }
 }

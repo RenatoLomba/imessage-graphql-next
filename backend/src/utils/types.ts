@@ -27,3 +27,7 @@ export interface ICreateUsernameResult {
   success: boolean
   error?: string
 }
+
+export interface IUsersArgs {
+  username?: string | null
+}

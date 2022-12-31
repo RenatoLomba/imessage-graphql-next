@@ -1,6 +1,7 @@
 query Users($username: String) {
   users(username: $username) {
     id
+    image
     username
   }
 }
