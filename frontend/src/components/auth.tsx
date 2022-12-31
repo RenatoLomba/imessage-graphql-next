@@ -21,7 +21,11 @@ type UsernameFormFields = {
   username: string
 }
 
-function UsernameForm() {
+type UsernameFormProps = {
+  onSuccess: () => void
+}
+
+function UsernameForm({ onSuccess }: UsernameFormProps) {
   const {
     register,
     handleSubmit,
@@ -44,7 +48,14 @@ function UsernameForm() {
         },
       })
 
-      console.log('createUsername result', result)
+      if (result.data?.createUsername.success) {
+        onSuccess()
+        return
+      }
+
+      errorToast({
+        title: result.data?.createUsername.error || 'Unknown error',
+      })
     } catch (error) {
       errorToast({ title: 'Create user error.' })
     }
@@ -91,7 +102,7 @@ export function Auth({ reloadSession, session }: AuthProps) {
   return (
     <Center h="100vh">
       {session ? (
-        <UsernameForm />
+        <UsernameForm onSuccess={reloadSession} />
       ) : (
         <Stack align="center" spacing={8}>
           <Text fontSize="3xl">MessengerQL</Text>

@@ -19,7 +19,8 @@ export default function Home() {
 
   if (!session?.user?.username) {
     const reloadSession = () => {
-      console.log('reloading session')
+      const event = new Event('visibilitychange')
+      document.dispatchEvent(event)
     }
 
     return <Auth session={session} reloadSession={reloadSession} />
