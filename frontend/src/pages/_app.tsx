@@ -1,5 +1,6 @@
 import { SessionProvider } from 'next-auth/react'
 import type { AppProps } from 'next/app'
+import { Toaster } from 'react-hot-toast'
 
 import { ApolloProvider } from '@apollo/client'
 import { ChakraProvider } from '@chakra-ui/react'
@@ -15,6 +16,17 @@ export default function App({
     <ApolloProvider client={apolloClient}>
       <SessionProvider session={session}>
         <ChakraProvider theme={theme}>
+          <Toaster
+            toastOptions={{
+              style: {
+                borderRadius: '10px',
+                background: '#333',
+                color: '#fff',
+              },
+            }}
+            position="bottom-center"
+            reverseOrder={false}
+          />
           <Component {...pageProps} />
         </ChakraProvider>
       </SessionProvider>

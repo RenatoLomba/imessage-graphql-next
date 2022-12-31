@@ -1,6 +1,7 @@
 import type { Session } from 'next-auth'
 import { signIn } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'react-hot-toast'
 import { FcGoogle } from 'react-icons/fc'
 
 import {
@@ -10,7 +11,6 @@ import {
   Text,
   Icon,
   Input,
-  useToast,
   FormControl,
   FormErrorMessage,
 } from '@chakra-ui/react'
@@ -32,12 +32,6 @@ function UsernameForm({ onSuccess }: UsernameFormProps) {
     formState: { errors },
   } = useForm<UsernameFormFields>()
 
-  const errorToast = useToast({
-    status: 'error',
-    variant: 'left-accent',
-    isClosable: true,
-  })
-
   const [createUsername, { loading }] = useCreateUsernameMutation()
 
   const onFormSubmit = async ({ username }: UsernameFormFields) => {
@@ -49,15 +43,14 @@ function UsernameForm({ onSuccess }: UsernameFormProps) {
       })
 
       if (result.data?.createUsername.success) {
+        toast.success('Username successfully created! 🚀')
         onSuccess()
         return
       }
 
-      errorToast({
-        title: result.data?.createUsername.error || 'Unknown error',
-      })
+      toast.error(result.data?.createUsername.error || 'Unknown error')
     } catch (error) {
-      errorToast({ title: 'Create user error.' })
+      toast.error('Create user error')
     }
   }
 
