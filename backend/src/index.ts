@@ -9,6 +9,7 @@ import http from 'http'
 import { getSession } from 'next-auth/react'
 
 import { makeExecutableSchema } from '@graphql-tools/schema'
+import { PrismaClient } from '@prisma/client'
 
 import { resolvers } from './graphql/resolvers'
 import { typeDefs } from './graphql/types'
@@ -24,15 +25,22 @@ async function bootstrap() {
     resolvers,
   })
 
+  const isProduction = process.env.NODE_ENV === 'production'
+
+  const prisma = new PrismaClient({
+    log: !isProduction ? ['error', 'query'] : ['error'],
+  })
+
   const server = new ApolloServer({
     schema,
     csrfPrevention: true,
     cache: 'bounded',
-    context: async ({ req, res }): Promise<IGraphQLContext> => {
+    context: async ({ req }): Promise<IGraphQLContext> => {
       const session = await getSession({ req })
 
       return {
         session,
+        prisma,
       }
     },
     plugins: [

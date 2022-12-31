@@ -1,4 +1,8 @@
-import type { IGraphQLContext } from '../../utils/types'
+import type {
+  ICreateUsernameArgs,
+  ICreateUsernameResult,
+  IGraphQLContext,
+} from '../../utils/types'
 
 export const userResolvers = {
   Query: {
@@ -7,13 +11,46 @@ export const userResolvers = {
   Mutation: {
     createUsername: async (
       _: unknown,
-      args: { username: string },
-      context: IGraphQLContext,
-    ) => {
-      const { username } = args
+      { username }: ICreateUsernameArgs,
+      { prisma, session }: IGraphQLContext,
+    ): Promise<ICreateUsernameResult> => {
+      if (!session?.user) {
+        return {
+          success: false,
+          error: 'Unauthorized',
+        }
+      }
 
-      console.log(username)
-      console.log(context)
+      const { id } = session.user
+
+      try {
+        const usernameAlreadyExists = await prisma.user.findUnique({
+          where: { username },
+        })
+
+        if (usernameAlreadyExists) {
+          return {
+            success: false,
+            error: 'Username already taken',
+          }
+        }
+
+        await prisma.user.update({
+          where: { id },
+          data: { username },
+        })
+
+        return {
+          success: true,
+        }
+      } catch (error) {
+        console.error('createUsername error', error.stack)
+
+        return {
+          success: false,
+          error: "Could't create username",
+        }
+      }
     },
   },
 }
