@@ -13,9 +13,10 @@ interface ISession {
   expires: ISODateString
 }
 
-export interface IGraphQLContext {
+export interface IGraphQLContext<T = {}> {
   session?: ISession | null
   prisma: PrismaClient
+  operationFields?: Record<keyof T, boolean> | null
   // pubsub
 }
 
@@ -29,5 +30,13 @@ export interface ICreateUsernameResult {
 }
 
 export interface IUsersArgs {
+  username: string
+}
+
+export interface IUser {
+  id: string
+  image?: string | null
   username?: string | null
 }
+
+export type IUsersResult = IUser[]

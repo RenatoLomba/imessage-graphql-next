@@ -16,7 +16,7 @@ import {
   FormErrorMessage,
 } from '@chakra-ui/react'
 
-import { useUsersQuery } from '../../graphql/generated'
+import { useUsersLazyQuery } from '../../graphql/generated'
 
 type ConversationsModalProps = {
   open: boolean
@@ -34,13 +34,13 @@ function ConversationsModal({ onClose, open }: ConversationsModalProps) {
     formState: { errors },
   } = useForm<SearchConversationsForm>()
 
-  const { data, refetch } = useUsersQuery()
+  const [searchUsers, { data, loading }] = useUsersLazyQuery()
 
   console.log({ data })
 
   const onSubmitSearch = async ({ username }: SearchConversationsForm) => {
-    refetch({
-      username,
+    searchUsers({
+      variables: { username },
     })
   }
 
@@ -72,7 +72,9 @@ function ConversationsModal({ onClose, open }: ConversationsModalProps) {
                 )}
               </FormControl>
 
-              <Button type="submit">Search</Button>
+              <Button isLoading={loading} type="submit">
+                Search
+              </Button>
             </Stack>
           </Box>
         </ModalBody>

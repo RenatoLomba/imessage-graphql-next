@@ -38,7 +38,7 @@ export type Query = {
 
 
 export type QueryUsersArgs = {
-  username?: InputMaybe<Scalars['String']>;
+  username: Scalars['String'];
 };
 
 export type User = {
@@ -56,7 +56,7 @@ export type CreateUsernameMutationVariables = Exact<{
 export type CreateUsernameMutation = { __typename?: 'Mutation', createUsername: { __typename?: 'CreateUsernameResponse', error?: string | null, success: boolean } };
 
 export type UsersQueryVariables = Exact<{
-  username?: InputMaybe<Scalars['String']>;
+  username: Scalars['String'];
 }>;
 
 
@@ -98,7 +98,7 @@ export type CreateUsernameMutationHookResult = ReturnType<typeof useCreateUserna
 export type CreateUsernameMutationResult = Apollo.MutationResult<CreateUsernameMutation>;
 export type CreateUsernameMutationOptions = Apollo.BaseMutationOptions<CreateUsernameMutation, CreateUsernameMutationVariables>;
 export const UsersDocument = gql`
-    query Users($username: String) {
+    query Users($username: String!) {
   users(username: $username) {
     id
     image
@@ -123,7 +123,7 @@ export const UsersDocument = gql`
  *   },
  * });
  */
-export function useUsersQuery(baseOptions?: Apollo.QueryHookOptions<UsersQuery, UsersQueryVariables>) {
+export function useUsersQuery(baseOptions: Apollo.QueryHookOptions<UsersQuery, UsersQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<UsersQuery, UsersQueryVariables>(UsersDocument, options);
       }

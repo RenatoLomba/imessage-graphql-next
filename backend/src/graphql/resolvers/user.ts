@@ -2,13 +2,32 @@ import type {
   ICreateUsernameArgs,
   ICreateUsernameResult,
   IGraphQLContext,
+  IUser,
   IUsersArgs,
+  IUsersResult,
 } from '../../utils/types'
 
 export const userResolvers = {
   Query: {
-    users: (_: unknown, args: IUsersArgs) => {
-      console.log('users', { args })
+    users: async (
+      _: unknown,
+      { username }: IUsersArgs,
+      { prisma, operationFields }: IGraphQLContext<IUser>,
+    ): Promise<IUsersResult> => {
+      const users = await prisma.user.findMany({
+        select: operationFields,
+        where: {
+          username: {
+            contains: username,
+          },
+        },
+        take: 10,
+        orderBy: {
+          username: 'asc',
+        },
+      })
+
+      return users
     },
   },
   Mutation: {

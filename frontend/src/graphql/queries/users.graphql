@@ -1,4 +1,4 @@
-query Users($username: String) {
+query Users($username: String!) {
   users(username: $username) {
     id
     image
