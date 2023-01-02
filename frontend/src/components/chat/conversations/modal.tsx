@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form'
+import { toast } from 'react-hot-toast'
 import { IoIosCloseCircleOutline } from 'react-icons/io'
 
 import {
@@ -18,9 +19,13 @@ import {
   Flex,
   Avatar,
   Icon,
+  ModalFooter,
 } from '@chakra-ui/react'
 
-import { useUsersLazyQuery } from '../../../graphql/generated'
+import {
+  useCreateConversationMutation,
+  useUsersLazyQuery,
+} from '../../../graphql/generated'
 import { useParticipants } from './participants'
 
 type ConversationsModalProps = {
@@ -41,6 +46,8 @@ export function ConversationsModal({ onClose, open }: ConversationsModalProps) {
   } = useForm<SearchConversationsForm>()
 
   const [searchUsers, { data, loading }] = useUsersLazyQuery()
+  const [createConversation, { loading: isCreating }] =
+    useCreateConversationMutation()
 
   const onSubmitSearch = async ({ username }: SearchConversationsForm) => {
     searchUsers({
@@ -52,10 +59,25 @@ export function ConversationsModal({ onClose, open }: ConversationsModalProps) {
     onParticipantAdded: () => resetField('username'),
   })
 
+  const onCreateConversation = async () => {
+    try {
+      const response = await createConversation({
+        variables: {
+          participants: participants.map((p) => p.id),
+        },
+      })
+
+      console.log({ response })
+    } catch (error) {
+      console.log({ error })
+      toast.error('Something went wrong when creating a conversation')
+    }
+  }
+
   return (
     <Modal isOpen={open} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent bg="#2d2d2d" pb={4}>
+      <ModalContent bg="#2d2d2d">
         <ModalHeader>Create a Conversation</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
@@ -152,6 +174,20 @@ export function ConversationsModal({ onClose, open }: ConversationsModalProps) {
             </Stack>
           </Box>
         </ModalBody>
+
+        {participants.length > 0 ? (
+          <ModalFooter>
+            <Button
+              isLoading={isCreating}
+              onClick={onCreateConversation}
+              w="100%"
+              colorScheme="brand"
+              color="white"
+            >
+              Create Conversation
+            </Button>
+          </ModalFooter>
+        ) : null}
       </ModalContent>
     </Modal>
   )

@@ -1,0 +1,5 @@
+mutation CreateConversation($participants: [String!]!) {
+  createConversation(participants: $participants) {
+    id
+  }
+}

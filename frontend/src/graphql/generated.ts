@@ -15,6 +15,11 @@ export type Scalars = {
   Float: number;
 };
 
+export type CreateConversationMutationResponse = {
+  __typename?: 'CreateConversationMutationResponse';
+  id: Scalars['String'];
+};
+
 export type CreateUsernameResponse = {
   __typename?: 'CreateUsernameResponse';
   error?: Maybe<Scalars['String']>;
@@ -23,7 +28,13 @@ export type CreateUsernameResponse = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createConversation: CreateConversationMutationResponse;
   createUsername: CreateUsernameResponse;
+};
+
+
+export type MutationCreateConversationArgs = {
+  participants: Array<Scalars['String']>;
 };
 
 
@@ -48,6 +59,13 @@ export type UsersQueryResponse = {
   username?: Maybe<Scalars['String']>;
 };
 
+export type CreateConversationMutationVariables = Exact<{
+  participants: Array<Scalars['String']> | Scalars['String'];
+}>;
+
+
+export type CreateConversationMutation = { __typename?: 'Mutation', createConversation: { __typename?: 'CreateConversationMutationResponse', id: string } };
+
 export type CreateUsernameMutationVariables = Exact<{
   username: Scalars['String'];
 }>;
@@ -63,6 +81,39 @@ export type UsersQueryVariables = Exact<{
 export type UsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'UsersQueryResponse', id: string, image?: string | null, username?: string | null }> };
 
 
+export const CreateConversationDocument = gql`
+    mutation CreateConversation($participants: [String!]!) {
+  createConversation(participants: $participants) {
+    id
+  }
+}
+    `;
+export type CreateConversationMutationFn = Apollo.MutationFunction<CreateConversationMutation, CreateConversationMutationVariables>;
+
+/**
+ * __useCreateConversationMutation__
+ *
+ * To run a mutation, you first call `useCreateConversationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateConversationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createConversationMutation, { data, loading, error }] = useCreateConversationMutation({
+ *   variables: {
+ *      participants: // value for 'participants'
+ *   },
+ * });
+ */
+export function useCreateConversationMutation(baseOptions?: Apollo.MutationHookOptions<CreateConversationMutation, CreateConversationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateConversationMutation, CreateConversationMutationVariables>(CreateConversationDocument, options);
+      }
+export type CreateConversationMutationHookResult = ReturnType<typeof useCreateConversationMutation>;
+export type CreateConversationMutationResult = Apollo.MutationResult<CreateConversationMutation>;
+export type CreateConversationMutationOptions = Apollo.BaseMutationOptions<CreateConversationMutation, CreateConversationMutationVariables>;
 export const CreateUsernameDocument = gql`
     mutation CreateUsername($username: String!) {
   createUsername(username: $username) {

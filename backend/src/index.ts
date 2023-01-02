@@ -13,12 +13,7 @@ import { PrismaClient } from '@prisma/client'
 
 import { resolvers } from './graphql/resolvers'
 import { typeDefs } from './graphql/types'
-import {
-  extractOperationFields,
-  getFieldValuesFromOperation,
-  getFirstOperationDef,
-  parseQuery,
-} from './utils/functions'
+import { extractOperationFieldsFromRequest } from './utils/functions'
 import type { IGraphQLContext } from './utils/types'
 
 async function bootstrap() {
@@ -42,17 +37,8 @@ async function bootstrap() {
     csrfPrevention: true,
     cache: 'bounded',
     context: async ({ req }): Promise<IGraphQLContext> => {
-      let operationFields: Record<string, boolean> | null = null
       const session = await getSession({ req })
-
-      const parsedQuery = parseQuery(req)
-      const fields = getFieldValuesFromOperation(
-        getFirstOperationDef(parsedQuery),
-      )
-
-      if (fields) {
-        operationFields = extractOperationFields(fields)
-      }
+      const operationFields = extractOperationFieldsFromRequest(req)
 
       return {
         session,
