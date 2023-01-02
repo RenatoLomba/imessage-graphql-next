@@ -33,7 +33,7 @@ export type MutationCreateUsernameArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  users: Array<User>;
+  users: Array<UsersQueryResponse>;
 };
 
 
@@ -41,8 +41,8 @@ export type QueryUsersArgs = {
   username: Scalars['String'];
 };
 
-export type User = {
-  __typename?: 'User';
+export type UsersQueryResponse = {
+  __typename?: 'UsersQueryResponse';
   id: Scalars['String'];
   image?: Maybe<Scalars['String']>;
   username?: Maybe<Scalars['String']>;
@@ -60,7 +60,7 @@ export type UsersQueryVariables = Exact<{
 }>;
 
 
-export type UsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, image?: string | null, username?: string | null }> };
+export type UsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'UsersQueryResponse', id: string, image?: string | null, username?: string | null }> };
 
 
 export const CreateUsernameDocument = gql`

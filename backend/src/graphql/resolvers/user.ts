@@ -1,33 +1,49 @@
+import { ApolloError } from 'apollo-server-core'
+
 import type {
   ICreateUsernameArgs,
   ICreateUsernameResult,
   IGraphQLContext,
-  IUser,
   IUsersArgs,
-  IUsersResult,
+  IUsersQueryData,
+  IUsersQueryResult,
 } from '../../utils/types'
 
 export const userResolvers = {
   Query: {
     users: async (
       _: unknown,
-      { username }: IUsersArgs,
-      { prisma, operationFields }: IGraphQLContext<IUser>,
-    ): Promise<IUsersResult> => {
-      const users = await prisma.user.findMany({
-        select: operationFields,
-        where: {
-          username: {
-            contains: username,
-          },
-        },
-        take: 10,
-        orderBy: {
-          username: 'asc',
-        },
-      })
+      { username: searchedUsername }: IUsersArgs,
+      { prisma, operationFields, session }: IGraphQLContext<IUsersQueryData>,
+    ): Promise<IUsersQueryResult> => {
+      if (!session?.user) {
+        throw new ApolloError('Unauthorized')
+      }
 
-      return users
+      const { username: sessionUsername } = session.user
+
+      try {
+        const users = await prisma.user.findMany({
+          select: operationFields,
+          where: {
+            username: {
+              contains: searchedUsername,
+              not: sessionUsername,
+              mode: 'insensitive',
+            },
+          },
+          take: 10,
+          orderBy: {
+            username: 'asc',
+          },
+        })
+
+        return users
+      } catch (error) {
+        console.error('users error', error.stack)
+
+        throw new ApolloError('Something went wrong when searching for users')
+      }
     },
   },
   Mutation: {

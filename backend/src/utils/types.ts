@@ -33,10 +33,10 @@ export interface IUsersArgs {
   username: string
 }
 
-export interface IUser {
+export interface IUsersQueryData {
   id: string
   image?: string | null
   username?: string | null
 }
 
-export type IUsersResult = IUser[]
+export type IUsersQueryResult = IUsersQueryData[]
