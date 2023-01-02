@@ -10,7 +10,9 @@ export const theme = extendTheme(
   {
     colors: {
       brand: {
-        500: '#3D84F7',
+        200: '#3D84F7',
+        300: '#5492f8',
+        400: '#85b1fa',
       },
     },
     styles: {

@@ -2,9 +2,9 @@ import type { Request } from 'express'
 import {
   type DefinitionNode,
   type DocumentNode,
+  type SelectionNode,
   Kind,
   parse,
-  type SelectionNode,
 } from 'graphql'
 
 export const getFirstOperationDef = (query: DocumentNode) =>
