@@ -24,9 +24,17 @@ export interface ICreateUsernameArgs {
   username: string
 }
 
+export interface ICreateConversationArgs {
+  participants: string[]
+}
+
 export interface ICreateUsernameResult {
   success: boolean
   error?: string
+}
+
+export interface ICreateConversationResult {
+  id: string
 }
 
 export interface IUsersArgs {

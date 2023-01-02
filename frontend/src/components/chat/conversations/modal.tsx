@@ -1,3 +1,4 @@
+import { useSession } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import { IoIosCloseCircleOutline } from 'react-icons/io'
@@ -44,6 +45,7 @@ export function ConversationsModal({ onClose, open }: ConversationsModalProps) {
     resetField,
     formState: { errors },
   } = useForm<SearchConversationsForm>()
+  const { data: session } = useSession()
 
   const [searchUsers, { data, loading }] = useUsersLazyQuery()
   const [createConversation, { loading: isCreating }] =
@@ -63,7 +65,7 @@ export function ConversationsModal({ onClose, open }: ConversationsModalProps) {
     try {
       const response = await createConversation({
         variables: {
-          participants: participants.map((p) => p.id),
+          participants: [session!.user.id!, ...participants.map((p) => p.id)],
         },
       })
 
