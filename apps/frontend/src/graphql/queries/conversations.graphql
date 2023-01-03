@@ -1,6 +1,7 @@
 query Conversations {
   conversations {
     id
+    updatedAt
     participants {
       id
       hasSeenLatestMessage
@@ -8,6 +9,18 @@ query Conversations {
         id
         username
       }
+    }
+    latestMessage {
+      id
+      text
+      participant {
+        id
+        user {
+          id
+          username
+        }
+      }
+      createdAt
     }
   }
 }

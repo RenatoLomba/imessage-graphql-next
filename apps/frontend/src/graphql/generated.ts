@@ -20,6 +20,7 @@ export type Conversation = {
   __typename?: 'Conversation';
   createdAt: Scalars['Date'];
   id: Scalars['String'];
+  latestMessage?: Maybe<Message>;
   participants: Array<Participant>;
   updatedAt: Scalars['Date'];
 };
@@ -33,6 +34,14 @@ export type CreateUsernameResponse = {
   __typename?: 'CreateUsernameResponse';
   error?: Maybe<Scalars['String']>;
   success: Scalars['Boolean'];
+};
+
+export type Message = {
+  __typename?: 'Message';
+  createdAt: Scalars['Date'];
+  id: Scalars['String'];
+  participant: Participant;
+  text: Scalars['String'];
 };
 
 export type Mutation = {
@@ -102,7 +111,7 @@ export type CreateUsernameMutation = { __typename?: 'Mutation', createUsername: 
 export type ConversationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ConversationsQuery = { __typename?: 'Query', conversations: Array<{ __typename?: 'Conversation', id: string, participants: Array<{ __typename?: 'Participant', id: string, hasSeenLatestMessage: boolean, user: { __typename?: 'User', id: string, username?: string | null } }> }> };
+export type ConversationsQuery = { __typename?: 'Query', conversations: Array<{ __typename?: 'Conversation', id: string, updatedAt: any, participants: Array<{ __typename?: 'Participant', id: string, hasSeenLatestMessage: boolean, user: { __typename?: 'User', id: string, username?: string | null } }>, latestMessage?: { __typename?: 'Message', id: string, text: string, createdAt: any, participant: { __typename?: 'Participant', id: string, user: { __typename?: 'User', id: string, username?: string | null } } } | null }> };
 
 export type UsersQueryVariables = Exact<{
   username: Scalars['String'];
@@ -183,6 +192,7 @@ export const ConversationsDocument = gql`
     query Conversations {
   conversations {
     id
+    updatedAt
     participants {
       id
       hasSeenLatestMessage
@@ -190,6 +200,18 @@ export const ConversationsDocument = gql`
         id
         username
       }
+    }
+    latestMessage {
+      id
+      text
+      participant {
+        id
+        user {
+          id
+          username
+        }
+      }
+      createdAt
     }
   }
 }

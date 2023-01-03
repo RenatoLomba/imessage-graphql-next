@@ -54,6 +54,9 @@ export const conversationResolvers = {
               },
             },
           },
+          orderBy: {
+            updatedAt: 'desc',
+          },
           include: conversationPopulated,
         })
 
