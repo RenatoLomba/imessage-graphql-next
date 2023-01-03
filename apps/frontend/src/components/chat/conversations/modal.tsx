@@ -1,4 +1,5 @@
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import { IoIosCloseCircleOutline } from 'react-icons/io'
@@ -43,13 +44,33 @@ export function ConversationsModal({ onClose, open }: ConversationsModalProps) {
     handleSubmit,
     register,
     resetField,
+    reset,
     formState: { errors },
   } = useForm<SearchConversationsForm>()
   const { data: session } = useSession()
+  const router = useRouter()
+
+  const { addParticipant, participants, removeParticipant, clearParticipants } =
+    useParticipants({
+      onParticipantAdded: () => resetField('username'),
+    })
 
   const [searchUsers, { data, loading }] = useUsersLazyQuery()
+
   const [createConversation, { loading: isCreating }] =
-    useCreateConversationMutation()
+    useCreateConversationMutation({
+      onCompleted(data) {
+        const conversationId = data?.createConversation.id
+        router.push({ query: { conversationId } })
+
+        clearParticipants()
+        reset()
+        onClose()
+      },
+      onError(error) {
+        toast.error(error.message)
+      },
+    })
 
   const onSubmitSearch = async ({ username }: SearchConversationsForm) => {
     searchUsers({
@@ -57,23 +78,12 @@ export function ConversationsModal({ onClose, open }: ConversationsModalProps) {
     })
   }
 
-  const { addParticipant, participants, removeParticipant } = useParticipants({
-    onParticipantAdded: () => resetField('username'),
-  })
-
   const onCreateConversation = async () => {
-    try {
-      const response = await createConversation({
-        variables: {
-          participants: [session!.user.id!, ...participants.map((p) => p.id)],
-        },
-      })
-
-      console.log({ response })
-    } catch (error) {
-      console.log({ error })
-      toast.error('Something went wrong when creating a conversation')
-    }
+    createConversation({
+      variables: {
+        participants: [session!.user.id!, ...participants.map((p) => p.id)],
+      },
+    })
   }
 
   return (

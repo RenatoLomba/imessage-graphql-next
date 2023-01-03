@@ -35,9 +35,14 @@ export function useParticipants({ onParticipantAdded }: UseParticipantsProps) {
     )
   }
 
+  const clearParticipants = () => {
+    setParticipants([])
+  }
+
   return {
     addParticipant,
     removeParticipant,
     participants,
+    clearParticipants,
   }
 }
