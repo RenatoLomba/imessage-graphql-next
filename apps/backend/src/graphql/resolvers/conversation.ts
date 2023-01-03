@@ -33,6 +33,38 @@ export const conversationPopulated =
   })
 
 export const conversationResolvers = {
+  Query: {
+    conversations: async (
+      _: unknown,
+      __: unknown,
+      { prisma, session }: IGraphQLContext,
+    ) => {
+      if (!session?.user) {
+        throw new ApolloError('Unauthorized')
+      }
+
+      const { id } = session.user
+
+      try {
+        const conversations = await prisma.conversation.findMany({
+          where: {
+            participants: {
+              some: {
+                userId: id,
+              },
+            },
+          },
+          include: conversationPopulated,
+        })
+
+        return conversations
+      } catch (error) {
+        console.error('conversations error', error.stack)
+
+        throw new ApolloError('Something went wrong')
+      }
+    },
+  },
   Mutation: {
     createConversation: async (
       _: unknown,

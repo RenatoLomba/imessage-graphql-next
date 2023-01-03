@@ -1,0 +1,13 @@
+query Conversations {
+  conversations {
+    id
+    participants {
+      id
+      hasSeenLatestMessage
+      user {
+        id
+        username
+      }
+    }
+  }
+}

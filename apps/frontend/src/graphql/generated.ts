@@ -13,6 +13,15 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  Date: any;
+};
+
+export type Conversation = {
+  __typename?: 'Conversation';
+  createdAt: Scalars['Date'];
+  id: Scalars['String'];
+  participants: Array<Participant>;
+  updatedAt: Scalars['Date'];
 };
 
 export type CreateConversationMutationResponse = {
@@ -42,14 +51,31 @@ export type MutationCreateUsernameArgs = {
   username: Scalars['String'];
 };
 
+export type Participant = {
+  __typename?: 'Participant';
+  hasSeenLatestMessage: Scalars['Boolean'];
+  id: Scalars['String'];
+  user: User;
+};
+
 export type Query = {
   __typename?: 'Query';
+  conversations: Array<Conversation>;
   users: Array<UsersQueryResponse>;
 };
 
 
 export type QueryUsersArgs = {
   username: Scalars['String'];
+};
+
+export type User = {
+  __typename?: 'User';
+  email?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  image?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+  username?: Maybe<Scalars['String']>;
 };
 
 export type UsersQueryResponse = {
@@ -72,6 +98,11 @@ export type CreateUsernameMutationVariables = Exact<{
 
 
 export type CreateUsernameMutation = { __typename?: 'Mutation', createUsername: { __typename?: 'CreateUsernameResponse', error?: string | null, success: boolean } };
+
+export type ConversationsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ConversationsQuery = { __typename?: 'Query', conversations: Array<{ __typename?: 'Conversation', id: string, participants: Array<{ __typename?: 'Participant', id: string, hasSeenLatestMessage: boolean, user: { __typename?: 'User', id: string, username?: string | null } }> }> };
 
 export type UsersQueryVariables = Exact<{
   username: Scalars['String'];
@@ -148,6 +179,48 @@ export function useCreateUsernameMutation(baseOptions?: Apollo.MutationHookOptio
 export type CreateUsernameMutationHookResult = ReturnType<typeof useCreateUsernameMutation>;
 export type CreateUsernameMutationResult = Apollo.MutationResult<CreateUsernameMutation>;
 export type CreateUsernameMutationOptions = Apollo.BaseMutationOptions<CreateUsernameMutation, CreateUsernameMutationVariables>;
+export const ConversationsDocument = gql`
+    query Conversations {
+  conversations {
+    id
+    participants {
+      id
+      hasSeenLatestMessage
+      user {
+        id
+        username
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useConversationsQuery__
+ *
+ * To run a query within a React component, call `useConversationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useConversationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useConversationsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useConversationsQuery(baseOptions?: Apollo.QueryHookOptions<ConversationsQuery, ConversationsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ConversationsQuery, ConversationsQueryVariables>(ConversationsDocument, options);
+      }
+export function useConversationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConversationsQuery, ConversationsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ConversationsQuery, ConversationsQueryVariables>(ConversationsDocument, options);
+        }
+export type ConversationsQueryHookResult = ReturnType<typeof useConversationsQuery>;
+export type ConversationsLazyQueryHookResult = ReturnType<typeof useConversationsLazyQuery>;
+export type ConversationsQueryResult = Apollo.QueryResult<ConversationsQuery, ConversationsQueryVariables>;
 export const UsersDocument = gql`
     query Users($username: String!) {
   users(username: $username) {

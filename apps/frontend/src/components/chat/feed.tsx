@@ -2,11 +2,17 @@ import { useRouter } from 'next/router'
 
 import { Flex } from '@chakra-ui/react'
 
+import { useConversationsQuery } from '../../graphql/generated'
+
 function EmptyConversation() {
   return <div>No conversation selected</div>
 }
 
 function MessageFeed({ conversationId }: { conversationId: string }) {
+  const { data } = useConversationsQuery()
+
+  console.log({ data })
+
   return <Flex>{conversationId}</Flex>
 }
 
