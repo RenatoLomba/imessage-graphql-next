@@ -30,11 +30,4 @@ export const conversationTypeDefs = gql`
     user: User!
     hasSeenLatestMessage: Boolean!
   }
-
-  type Message {
-    id: String!
-    text: String!
-    participant: Participant!
-    createdAt: Date!
-  }
 `

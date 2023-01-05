@@ -1,15 +1,16 @@
 import { Box, Button, useDisclosure } from '@chakra-ui/react'
 
+import { useConversationsQuery } from '../../../graphql/generated'
 import { ConversationsModal } from './modal'
 
 export function Conversations() {
   const { isOpen, onClose, onOpen } = useDisclosure()
+  const { data, loading } = useConversationsQuery()
+
+  console.log({ data, loading })
 
   return (
     <Box w={{ base: '100%', md: '400px' }} bg="whiteAlpha.50" py={6} px={3}>
-      {/**
-       * ConversationsList
-       */}
       <Box w="100%">
         <Button
           mb={4}
@@ -21,6 +22,10 @@ export function Conversations() {
         >
           Find or start a conversation
         </Button>
+
+        {/**
+         * ConversationsList
+         */}
       </Box>
 
       <ConversationsModal open={isOpen} onClose={onClose} />
