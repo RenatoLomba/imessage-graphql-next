@@ -50,7 +50,9 @@ export const conversationResolvers = {
           where: {
             participants: {
               some: {
-                userId: id,
+                userId: {
+                  equals: id,
+                },
               },
             },
           },

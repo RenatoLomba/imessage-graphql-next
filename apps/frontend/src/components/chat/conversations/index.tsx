@@ -1,6 +1,7 @@
 import { Box, Button, useDisclosure } from '@chakra-ui/react'
 
 import { useConversationsQuery } from '../../../graphql/generated'
+import { ConversationItem } from './item'
 import { ConversationsModal } from './modal'
 
 export function Conversations() {
@@ -23,9 +24,9 @@ export function Conversations() {
           Find or start a conversation
         </Button>
 
-        {/**
-         * ConversationsList
-         */}
+        {data?.conversations.map((conversation) => (
+          <ConversationItem key={conversation.id} conversation={conversation} />
+        ))}
       </Box>
 
       <ConversationsModal open={isOpen} onClose={onClose} />
