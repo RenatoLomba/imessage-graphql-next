@@ -1,21 +1,20 @@
 import { ApolloError } from 'apollo-server-core'
 
+import type { IGraphQLContext } from '../../utils/types'
 import type {
-  ICreateUsernameArgs,
-  ICreateUsernameResult,
-  IGraphQLContext,
-  IUsersArgs,
-  IUsersQueryData,
-  IUsersQueryResult,
-} from '../../utils/types'
+  QueryUsersArgs,
+  User,
+  MutationCreateUsernameArgs,
+  CreateUsernameResponse,
+} from '../generated'
 
 export const userResolvers = {
   Query: {
     users: async (
       _: unknown,
-      { username: searchedUsername }: IUsersArgs,
-      { prisma, operationFields, session }: IGraphQLContext<IUsersQueryData>,
-    ): Promise<IUsersQueryResult> => {
+      { username: searchedUsername }: QueryUsersArgs,
+      { prisma, operationFields, session }: IGraphQLContext<User>,
+    ): Promise<User[]> => {
       if (!session?.user) {
         throw new ApolloError('Unauthorized')
       }
@@ -49,9 +48,9 @@ export const userResolvers = {
   Mutation: {
     createUsername: async (
       _: unknown,
-      { username }: ICreateUsernameArgs,
+      { username }: MutationCreateUsernameArgs,
       { prisma, session }: IGraphQLContext,
-    ): Promise<ICreateUsernameResult> => {
+    ): Promise<CreateUsernameResponse> => {
       if (!session?.user) {
         return {
           success: false,

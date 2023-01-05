@@ -12,7 +12,7 @@ import { makeExecutableSchema } from '@graphql-tools/schema'
 import { PrismaClient } from '@prisma/client'
 
 import { resolvers } from './graphql/resolvers'
-import { typeDefs } from './graphql/types'
+import { typeDefs } from './graphql/typedefs'
 import { extractOperationFieldsFromRequest } from './utils/functions'
 import type { IGraphQLContext } from './utils/types'
 

@@ -19,32 +19,3 @@ export interface IGraphQLContext<T = {}> {
   operationFields?: Record<keyof T, boolean> | null
   // pubsub
 }
-
-export interface ICreateUsernameArgs {
-  username: string
-}
-
-export interface ICreateConversationArgs {
-  participants: string[]
-}
-
-export interface ICreateUsernameResult {
-  success: boolean
-  error?: string
-}
-
-export interface ICreateConversationResult {
-  id: string
-}
-
-export interface IUsersArgs {
-  username: string
-}
-
-export interface IUsersQueryData {
-  id: string
-  image?: string | null
-  username?: string | null
-}
-
-export type IUsersQueryResult = IUsersQueryData[]

@@ -2,11 +2,11 @@ import { ApolloError } from 'apollo-server-core'
 
 import { Prisma } from '@prisma/client'
 
+import type { IGraphQLContext } from '../../utils/types'
 import type {
-  ICreateConversationArgs,
-  ICreateConversationResult,
-  IGraphQLContext,
-} from '../../utils/types'
+  CreateConversationMutationResponse,
+  MutationCreateConversationArgs,
+} from '../generated'
 
 export const participantPopulated =
   Prisma.validator<Prisma.ConversationParticipantInclude>()({
@@ -71,9 +71,9 @@ export const conversationResolvers = {
   Mutation: {
     createConversation: async (
       _: unknown,
-      { participants }: ICreateConversationArgs,
+      { participants }: MutationCreateConversationArgs,
       { prisma, session }: IGraphQLContext,
-    ): Promise<ICreateConversationResult> => {
+    ): Promise<CreateConversationMutationResponse> => {
       if (!session?.user) {
         throw new ApolloError('Unauthorized')
       }

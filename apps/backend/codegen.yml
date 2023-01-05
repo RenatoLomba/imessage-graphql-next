@@ -1,0 +1,6 @@
+schema: './src/graphql/typedefs/**/*.graphql'
+generates:
+  './src/graphql/generated.ts':
+    plugins: ['typescript']
+    config:
+      enumsAsConst: true
