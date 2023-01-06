@@ -12,7 +12,7 @@ import { getSession } from 'next-auth/react'
 import { WebSocketServer } from 'ws'
 
 import { makeExecutableSchema } from '@graphql-tools/schema'
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@imessage-graphql/db-config'
 
 import { resolvers } from './graphql/resolvers'
 import { typeDefs } from './graphql/typedefs'

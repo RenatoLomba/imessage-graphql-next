@@ -1,6 +1,6 @@
 import { ApolloError } from 'apollo-server-core'
 
-import { Prisma } from '@prisma/client'
+import { Prisma } from '@imessage-graphql/db-config'
 
 import type { IGraphQLContext } from '../../utils/types'
 import type {

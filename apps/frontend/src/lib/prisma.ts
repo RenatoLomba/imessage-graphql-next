@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@imessage-graphql/db-config'
 
 declare global {
   // eslint-disable-next-line no-var, no-unused-vars
@@ -10,11 +10,6 @@ const isProduction = process.env.NODE_ENV === 'production'
 const client: PrismaClient =
   globalThis.prisma ||
   new PrismaClient({
-    datasources: {
-      db: {
-        url: process.env.DATABASE_URL,
-      },
-    },
     log: !isProduction ? ['error', 'query'] : [],
   })
 

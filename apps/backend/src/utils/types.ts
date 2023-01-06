@@ -2,7 +2,7 @@ import type { PubSub } from 'graphql-subscriptions'
 import type { Context } from 'graphql-ws/lib/server'
 import type { ISODateString } from 'next-auth'
 
-import type { PrismaClient } from '@prisma/client'
+import type { PrismaClient } from '@imessage-graphql/db-config'
 
 interface ISession {
   user?: {

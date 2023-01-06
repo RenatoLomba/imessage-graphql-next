@@ -1,0 +1,18 @@
+{
+  "name": "@imessage-graphql/db-config",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.ts",
+  "license": "MIT",
+  "scripts": {
+    "migrate": "prisma migrate dev",
+    "generate": "prisma generate",
+    "studio": "prisma studio"
+  },
+  "devDependencies": {
+    "prisma": "^4.8.1"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.8.1"
+  }
+}
