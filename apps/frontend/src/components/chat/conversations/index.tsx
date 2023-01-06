@@ -1,6 +1,8 @@
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 
-import { Box, Button, useDisclosure } from '@chakra-ui/react'
+import { Button, Skeleton, Stack, useDisclosure } from '@chakra-ui/react'
 
 import {
   useConversationsQuery,
@@ -15,8 +17,13 @@ type SubscriptionData = {
 }
 
 export function Conversations() {
+  const router = useRouter()
+  const { data: session } = useSession()
   const { isOpen, onClose, onOpen } = useDisclosure()
-  const { data, /* loading, */ subscribeToMore } = useConversationsQuery()
+  const { data, loading, subscribeToMore } = useConversationsQuery()
+
+  const user = session!.user!
+  const conversationId = router.query.conversationId!
 
   const subscribeToNewConversations = () => {
     subscribeToMore({
@@ -38,26 +45,56 @@ export function Conversations() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  return (
-    <Box w={{ base: '100%', md: '400px' }} bg="whiteAlpha.50" py={6} px={3}>
-      <Box w="100%">
-        <Button
-          mb={4}
-          w="100%"
-          colorScheme="blackAlpha"
-          color="whiteAlpha.800"
-          fontWeight={500}
-          onClick={onOpen}
-        >
-          Find or start a conversation
-        </Button>
+  const onViewConversation = async (conversationId: string) => {
+    router.push({
+      query: { conversationId },
+    })
 
-        {data?.conversations.map((conversation) => (
-          <ConversationItem key={conversation.id} conversation={conversation} />
-        ))}
-      </Box>
+    // mark the conversation as read
+  }
+
+  return (
+    <Stack
+      display={{ base: conversationId ? 'none' : 'flex', md: 'flex' }}
+      w={{ base: '100%', md: '400px' }}
+      bg="whiteAlpha.50"
+      py={6}
+      px={3}
+    >
+      <Button
+        mb={4}
+        py={4}
+        w="100%"
+        colorScheme="blackAlpha"
+        color="whiteAlpha.800"
+        fontWeight={500}
+        onClick={onOpen}
+      >
+        Find or start a conversation
+      </Button>
+
+      <Stack w="100%" overflowY="auto">
+        {loading ? (
+          <>
+            <Skeleton h={20} />
+            <Skeleton h={20} />
+            <Skeleton h={20} />
+          </>
+        ) : (
+          data?.conversations.map((conversation) => (
+            <ConversationItem
+              userId={user.id!}
+              isSelected={conversationId === conversation.id}
+              onClick={() => onViewConversation(conversation.id)}
+              onDeleteConversation={() => {}}
+              key={conversation.id}
+              conversation={conversation}
+            />
+          ))
+        )}
+      </Stack>
 
       <ConversationsModal open={isOpen} onClose={onClose} />
-    </Box>
+    </Stack>
   )
 }

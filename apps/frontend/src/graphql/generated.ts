@@ -109,7 +109,7 @@ export type CreateUsernameMutation = { __typename?: 'Mutation', createUsername: 
 export type ConversationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ConversationsQuery = { __typename?: 'Query', conversations: Array<{ __typename?: 'Conversation', id: string, updatedAt: any, participants: Array<{ __typename?: 'Participant', id: string, hasSeenLatestMessage: boolean, user: { __typename?: 'User', id: string, username?: string | null } }>, latestMessage?: { __typename?: 'Message', id: string, text: string, createdAt: any, participant: { __typename?: 'Participant', id: string, user: { __typename?: 'User', id: string, username?: string | null } } } | null }> };
+export type ConversationsQuery = { __typename?: 'Query', conversations: Array<{ __typename?: 'Conversation', id: string, updatedAt: any, participants: Array<{ __typename?: 'Participant', id: string, hasSeenLatestMessage: boolean, user: { __typename?: 'User', id: string, username?: string | null } }>, latestMessage?: { __typename?: 'Message', id: string, text: string, createdAt: any, participant: { __typename?: 'Participant', id: string, user: { __typename?: 'User', id: string, username?: string | null, image?: string | null } } } | null }> };
 
 export type UsersQueryVariables = Exact<{
   username: Scalars['String'];
@@ -212,6 +212,7 @@ export const ConversationsDocument = gql`
         user {
           id
           username
+          image
         }
       }
       createdAt

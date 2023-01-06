@@ -5,7 +5,7 @@ import { Feed } from './feed'
 
 export function Chat() {
   return (
-    <Flex h="100vh">
+    <Flex h="100vh" overflow="hidden">
       <Conversations />
       <Feed />
     </Flex>

@@ -1,4 +1,5 @@
 import { ApolloError } from 'apollo-server-core'
+import { withFilter } from 'graphql-subscriptions'
 
 import { Prisma } from '@imessage-graphql/db-config'
 
@@ -6,6 +7,8 @@ import type { IGraphQLContext } from '../../utils/types'
 import type {
   CreateConversationMutationResponse,
   MutationCreateConversationArgs,
+  Conversation,
+  Subscription,
 } from '../generated'
 
 export const participantPopulated =
@@ -38,7 +41,7 @@ export const conversationResolvers = {
       _: unknown,
       __: unknown,
       { prisma, session }: IGraphQLContext,
-    ) => {
+    ): Promise<Conversation[]> => {
       if (!session?.user) {
         throw new ApolloError('Unauthorized')
       }
@@ -97,7 +100,6 @@ export const conversationResolvers = {
           include: conversationPopulated,
         })
 
-        // emit a conversation created event using pubsub
         pubsub.publish('CONVERSATION_CREATED', {
           conversationCreated: conversation,
         })
@@ -116,8 +118,21 @@ export const conversationResolvers = {
   },
   Subscription: {
     conversationCreated: {
-      subscribe: (_: unknown, __: unknown, { pubsub }: IGraphQLContext) =>
-        pubsub.asyncIterator(['CONVERSATION_CREATED']),
+      subscribe: withFilter(
+        (_: unknown, __: unknown, { pubsub }: IGraphQLContext) =>
+          pubsub.asyncIterator(['CONVERSATION_CREATED']),
+        (
+          { conversationCreated: { participants } }: Subscription,
+          _: unknown,
+          { session }: IGraphQLContext,
+        ) => {
+          const userIsParticipant = !!participants.find(
+            (p) => p.user.id === session.user.id,
+          )
+
+          return userIsParticipant
+        },
+      ),
     },
   },
 }

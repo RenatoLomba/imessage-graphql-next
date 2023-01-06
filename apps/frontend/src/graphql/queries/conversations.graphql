@@ -18,6 +18,7 @@ query Conversations {
         user {
           id
           username
+          image
         }
       }
       createdAt

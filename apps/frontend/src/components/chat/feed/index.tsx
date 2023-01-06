@@ -1,17 +1,19 @@
+import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 
 import { Flex } from '@chakra-ui/react'
+
+import { MessagesHeader } from './header'
 
 function EmptyConversation() {
   return <div>No conversation selected</div>
 }
 
-function MessageFeed({ conversationId }: { conversationId: string }) {
-  return <Flex>{conversationId}</Flex>
-}
-
 export function Feed() {
   const router = useRouter()
+  const { data: session } = useSession()
+
+  const user = session!.user!
   const { conversationId } = router.query
 
   return (
@@ -20,8 +22,15 @@ export function Feed() {
       direction="column"
       display={{ base: conversationId ? 'flex' : 'none', md: 'flex' }}
     >
-      {conversationId ? (
-        <MessageFeed conversationId={conversationId as string} />
+      {conversationId && typeof conversationId === 'string' ? (
+        <Flex
+          direction="column"
+          justify="space-between"
+          overflow="hidden"
+          flexGrow={1}
+        >
+          <MessagesHeader userId={user.id!} conversationId={conversationId} />
+        </Flex>
       ) : (
         <EmptyConversation />
       )}
