@@ -75,6 +75,11 @@ export type QueryUsersArgs = {
   username: Scalars['String'];
 };
 
+export type Subscription = {
+  __typename?: 'Subscription';
+  conversationCreated?: Maybe<Conversation>;
+};
+
 export type User = {
   __typename?: 'User';
   email?: Maybe<Scalars['String']>;

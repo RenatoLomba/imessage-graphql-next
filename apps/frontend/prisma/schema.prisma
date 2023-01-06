@@ -34,14 +34,15 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  username      String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
+  id                      String                    @id @default(cuid())
+  name                    String?
+  email                   String?                   @unique
+  username                String?                   @unique
+  emailVerified           DateTime?
+  image                   String?
+  accounts                Account[]
+  ConversationParticipant ConversationParticipant[]
+  sessions                Session[]
 }
 
 model VerificationToken {
@@ -50,4 +51,35 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Conversation {
+  id                      String                    @id
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime
+  latestMessageId         String?                   @unique
+  Message                 Message?                  @relation(fields: [latestMessageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  ConversationParticipant ConversationParticipant[]
+}
+
+model ConversationParticipant {
+  id                   String       @id
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime
+  userId               String
+  conversationId       String
+  hasSeenLatestMessage Boolean      @default(false)
+  Conversation         Conversation @relation(fields: [conversationId], references: [id])
+  User                 User         @relation(fields: [userId], references: [id])
+  Message              Message[]
+}
+
+model Message {
+  id                      String                  @id
+  createdAt               DateTime                @default(now())
+  updatedAt               DateTime
+  participantId           String
+  text                    String
+  Conversation            Conversation?
+  ConversationParticipant ConversationParticipant @relation(fields: [participantId], references: [id])
 }

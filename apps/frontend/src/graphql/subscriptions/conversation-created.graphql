@@ -1,0 +1,14 @@
+subscription ConversationCreated {
+  conversationCreated {
+    id
+    updatedAt
+    participants {
+      id
+      hasSeenLatestMessage
+      user {
+        id
+        username
+      }
+    }
+  }
+}

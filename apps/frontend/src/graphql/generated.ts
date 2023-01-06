@@ -70,12 +70,17 @@ export type Participant = {
 export type Query = {
   __typename?: 'Query';
   conversations: Array<Conversation>;
-  users: Array<UsersQueryResponse>;
+  users: Array<User>;
 };
 
 
 export type QueryUsersArgs = {
   username: Scalars['String'];
+};
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  conversationCreated?: Maybe<Conversation>;
 };
 
 export type User = {
@@ -84,13 +89,6 @@ export type User = {
   id: Scalars['String'];
   image?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
-  username?: Maybe<Scalars['String']>;
-};
-
-export type UsersQueryResponse = {
-  __typename?: 'UsersQueryResponse';
-  id: Scalars['String'];
-  image?: Maybe<Scalars['String']>;
   username?: Maybe<Scalars['String']>;
 };
 
@@ -118,7 +116,12 @@ export type UsersQueryVariables = Exact<{
 }>;
 
 
-export type UsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'UsersQueryResponse', id: string, image?: string | null, username?: string | null }> };
+export type UsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, image?: string | null, username?: string | null }> };
+
+export type ConversationCreatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ConversationCreatedSubscription = { __typename?: 'Subscription', conversationCreated?: { __typename?: 'Conversation', id: string, updatedAt: any, participants: Array<{ __typename?: 'Participant', id: string, hasSeenLatestMessage: boolean, user: { __typename?: 'User', id: string, username?: string | null } }> } | null };
 
 
 export const CreateConversationDocument = gql`
@@ -280,3 +283,41 @@ export function useUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<User
 export type UsersQueryHookResult = ReturnType<typeof useUsersQuery>;
 export type UsersLazyQueryHookResult = ReturnType<typeof useUsersLazyQuery>;
 export type UsersQueryResult = Apollo.QueryResult<UsersQuery, UsersQueryVariables>;
+export const ConversationCreatedDocument = gql`
+    subscription ConversationCreated {
+  conversationCreated {
+    id
+    updatedAt
+    participants {
+      id
+      hasSeenLatestMessage
+      user {
+        id
+        username
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useConversationCreatedSubscription__
+ *
+ * To run a query within a React component, call `useConversationCreatedSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useConversationCreatedSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useConversationCreatedSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useConversationCreatedSubscription(baseOptions?: Apollo.SubscriptionHookOptions<ConversationCreatedSubscription, ConversationCreatedSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<ConversationCreatedSubscription, ConversationCreatedSubscriptionVariables>(ConversationCreatedDocument, options);
+      }
+export type ConversationCreatedSubscriptionHookResult = ReturnType<typeof useConversationCreatedSubscription>;
+export type ConversationCreatedSubscriptionResult = Apollo.SubscriptionResult<ConversationCreatedSubscription>;

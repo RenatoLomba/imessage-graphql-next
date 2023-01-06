@@ -74,7 +74,7 @@ export const conversationResolvers = {
     createConversation: async (
       _: unknown,
       { participants }: MutationCreateConversationArgs,
-      { prisma, session }: IGraphQLContext,
+      { prisma, session, pubsub }: IGraphQLContext,
     ): Promise<CreateConversationMutationResponse> => {
       if (!session?.user) {
         throw new ApolloError('Unauthorized')
@@ -98,6 +98,9 @@ export const conversationResolvers = {
         })
 
         // emit a conversation created event using pubsub
+        pubsub.publish('CONVERSATION_CREATED', {
+          conversationCreated: conversation,
+        })
 
         return {
           id: conversation.id,
@@ -109,6 +112,12 @@ export const conversationResolvers = {
           'Something went wrong when creating a conversation',
         )
       }
+    },
+  },
+  Subscription: {
+    conversationCreated: {
+      subscribe: (_: unknown, __: unknown, { pubsub }: IGraphQLContext) =>
+        pubsub.asyncIterator(['CONVERSATION_CREATED']),
     },
   },
 }

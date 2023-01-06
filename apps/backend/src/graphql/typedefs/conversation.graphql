@@ -27,3 +27,7 @@ type Participant {
   user: User!
   hasSeenLatestMessage: Boolean!
 }
+
+type Subscription {
+  conversationCreated: Conversation
+}
