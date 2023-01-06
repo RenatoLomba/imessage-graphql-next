@@ -1,6 +1,8 @@
-import { ISODateString } from 'next-auth'
+import type { PubSub } from 'graphql-subscriptions'
+import type { Context } from 'graphql-ws/lib/server'
+import type { ISODateString } from 'next-auth'
 
-import { PrismaClient } from '@prisma/client'
+import type { PrismaClient } from '@prisma/client'
 
 interface ISession {
   user?: {
@@ -17,5 +19,11 @@ export interface IGraphQLContext<T = {}> {
   session?: ISession | null
   prisma: PrismaClient
   operationFields?: Record<keyof T, boolean> | null
-  // pubsub
+  pubsub: PubSub
+}
+
+export interface ISubscriptionContext extends Context {
+  connectionParams: {
+    session?: ISession | null
+  }
 }

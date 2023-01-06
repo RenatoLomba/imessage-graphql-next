@@ -5,8 +5,11 @@ import {
 import { ApolloServer } from 'apollo-server-express'
 import * as dotenv from 'dotenv'
 import express from 'express'
+import { PubSub } from 'graphql-subscriptions'
+import { useServer } from 'graphql-ws/lib/use/ws'
 import http from 'http'
 import { getSession } from 'next-auth/react'
+import { WebSocketServer } from 'ws'
 
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import { PrismaClient } from '@prisma/client'
@@ -14,12 +17,16 @@ import { PrismaClient } from '@prisma/client'
 import { resolvers } from './graphql/resolvers'
 import { typeDefs } from './graphql/typedefs'
 import { extractOperationFieldsFromRequest } from './utils/functions'
-import type { IGraphQLContext } from './utils/types'
+import type { IGraphQLContext, ISubscriptionContext } from './utils/types'
 
 async function bootstrap() {
   dotenv.config()
   const app = express()
   const httpServer = http.createServer(app)
+  const wsServer = new WebSocketServer({
+    server: httpServer,
+    path: '/graphql/subscriptions',
+  })
 
   const schema = makeExecutableSchema({
     typeDefs,
@@ -31,6 +38,21 @@ async function bootstrap() {
   const prisma = new PrismaClient({
     log: !isProduction ? ['error', 'query'] : ['error'],
   })
+  const pubsub = new PubSub()
+
+  const serverCleanup = useServer(
+    {
+      schema,
+      context: async (ctx: ISubscriptionContext): Promise<IGraphQLContext> => {
+        return {
+          session: ctx.connectionParams?.session,
+          prisma,
+          pubsub,
+        }
+      },
+    },
+    wsServer,
+  )
 
   const server = new ApolloServer({
     schema,
@@ -44,10 +66,20 @@ async function bootstrap() {
         session,
         prisma,
         operationFields,
+        pubsub,
       }
     },
     plugins: [
       ApolloServerPluginDrainHttpServer({ httpServer }),
+      {
+        async serverWillStart() {
+          return {
+            async drainServer() {
+              await serverCleanup.dispose()
+            },
+          }
+        },
+      },
       ApolloServerPluginLandingPageLocalDefault({ embed: true }),
     ],
   })
